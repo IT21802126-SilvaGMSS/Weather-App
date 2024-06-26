@@ -2,9 +2,32 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:weather_app/additional_info_item.dart";
 import "package:weather_app/hourly_forcast_item.dart";
+import 'package:http/http.dart' as http;
+import "package:weather_app/secrets.dart";
 
-class WeatherScreen extends StatelessWidget {
+class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
+  @override
+  void initState() {
+    super.initState();
+    getCurrentWeather();
+  }
+
+  Future getCurrentWeather() async {
+    String cityName = 'Sri Lanka';
+    final res = await http.get(
+      Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?q=$cityName&APPID=$openWeatherAPIKey'),
+    );
+
+    print(res.body);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +40,7 @@ class WeatherScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: (){}, 
+            onPressed: () {},
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -25,6 +48,7 @@ class WeatherScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //main card
@@ -33,8 +57,7 @@ class WeatherScreen extends StatelessWidget {
               child: Card(
                 elevation: 10,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)
-                ),
+                    borderRadius: BorderRadius.circular(16)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: BackdropFilter(
@@ -43,19 +66,21 @@ class WeatherScreen extends StatelessWidget {
                       padding: EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          Text('300°F',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          Text(
+                            '300 K',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           SizedBox(height: 10),
                           Icon(
                             Icons.cloud,
-                            size: 64,  
+                            size: 64,
                           ),
                           SizedBox(height: 16),
-                          Text('Rain',
+                          Text(
+                            'Rain',
                             style: TextStyle(
                               fontSize: 20,
                             ),
@@ -69,22 +94,42 @@ class WeatherScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-                'Weather Forecast',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              'Weather Forecast',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
+            ),
             const SizedBox(height: 16),
             const SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  HourlyForcastItem(),
-                  HourlyForcastItem(),
-                  HourlyForcastItem(),
-                  HourlyForcastItem(), 
-                  HourlyForcastItem(),                
+                  HourlyForcastItem(
+                    time: '00:00',
+                    icon: Icons.cloud,
+                    temperature: '301.22',
+                  ),
+                  HourlyForcastItem(
+                    time: '03:00',
+                    icon: Icons.sunny,
+                    temperature: '300.52',
+                  ),
+                  HourlyForcastItem(
+                    time: '06:00',
+                    icon: Icons.cloud,
+                    temperature: '302.22',
+                  ),
+                  HourlyForcastItem(
+                    time: '09:00',
+                    icon: Icons.sunny,
+                    temperature: '301.22',
+                  ),
+                  HourlyForcastItem(
+                    time: '12:00',
+                    icon: Icons.cloud,
+                    temperature: '304.12',
+                  ),
                 ],
               ),
             ),
@@ -100,9 +145,21 @@ class WeatherScreen extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                AdditionalInfoItem(),
-                AdditionalInfoItem(),
-                AdditionalInfoItem(),
+                AdditionalInfoItem(
+                  icon: Icons.water_drop,
+                  label: 'Humidity',
+                  value: '91',
+                ),
+                AdditionalInfoItem(
+                  icon: Icons.air,
+                  label: 'Wind Speed',
+                  value: '7.5',
+                ),
+                AdditionalInfoItem(
+                  icon: Icons.beach_access,
+                  label: 'Pressure',
+                  value: '1000',
+                ),
               ],
             )
           ],
@@ -111,7 +168,3 @@ class WeatherScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
